@@ -37,7 +37,12 @@ public class SwiftLang {
         return punctuations.contains(lexeme);
     }
 
-    boolean isIdentifierHead(char character) {
+    boolean isLineBreak(char character){
+        // carriage return or line feed
+        return character == 10 || character == 13;
+    }
+
+    boolean isIdHead(char character) {
         // uppercase letter or lowercase letter
         if ((character >= 65 && character <= 90) || (character >= 97 && character <= 122)) {
             return true;
@@ -51,8 +56,9 @@ public class SwiftLang {
         return false;
     }
 
-    boolean isLineBreak(char character){
-        // carriage return or line feed
-        return character == 10 || character == 13;
+    boolean isIdChar(char character) {
+        if (isIdHead(character)) return true;
+        if (character >= 48 && character <= 57) return true;
+        return false;
     }
 }

@@ -2,7 +2,8 @@
 //  Copyright © 2015 Jake Lin. All rights reserved.
 /* test comment 2 */
 // cool comments
-/* WOHOO */ //jhsjd
+/* WOHOO */
+//jhsjd
 // hgc
 /*hdbgh*/
 /* hello
