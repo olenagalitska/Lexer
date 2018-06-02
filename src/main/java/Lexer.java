@@ -104,6 +104,7 @@ class Lexer {
 
             switch (character) {
                 case '/':
+                    // look ahead to see if it is a comment and not operator
                     if (inputQueue.peek() == '/' || inputQueue.peek() == '*')
                         return getCommentToken();
                     break;
