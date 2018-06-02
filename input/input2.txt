@@ -23,11 +23,16 @@ POSSIBILITY OF SUCH DAMAGE.
 
 import SystemConfiguration
 import Foundation
-
+0.4e+10
+-3p-5
+-8.3
+.+.
 public enum ReachabilityError: Error {
+.Ĭ
     case FailedToCreateWithAddress(sockaddr_in)
     case FailedToCreateWithHostname(String)
     case UnableToSetCallback
+    +͟
     case UnableToSetDispatchQueue
 }
 

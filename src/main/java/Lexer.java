@@ -104,7 +104,9 @@ class Lexer {
 
             switch (character) {
                 case '/':
-                    return getCommentToken();
+                    if (inputQueue.peek() == '/' || inputQueue.peek() == '*')
+                        return getCommentToken();
+                    break;
                 case '`':
                     return getIdToken(2);
                 case '$':
@@ -113,6 +115,12 @@ class Lexer {
                     return getStringLiteralToken();
                 case '#':
                     return getDirectiveToken();
+                case '.':
+                    if (lang.isOperatorChar(inputQueue.peek()))
+                        return getOperatorToken();
+                case '-':
+                    if (inputQueue.peek() >= '0' && inputQueue.peek() <= '9')
+                        return getNumberToken();
             }
 
             if (lang.isIdHead(character)) return getIdToken(1);
@@ -136,9 +144,10 @@ class Lexer {
                         nextCommentState = 2;
                     } else if (character == '*') { // -> "/*"
                         nextCommentState = 3;
-                    } else {
-                        return new Token(TokenType.ERROR, lexemeBuffer);
                     }
+//                    else {
+//                        return new Token(TokenType.ERROR, lexemeBuffer);
+//                    }
                     break;
                 case 2:
                     if (lang.isLineBreak(character)) { // end of "//" comment
@@ -189,18 +198,20 @@ class Lexer {
                 case 2:
                     if (lang.isIdHead(character)) {
                         nextIdState = 3;
-                    } else {
-                        return new Token(TokenType.ERROR, lexemeBuffer);
                     }
+//                    else {
+//                        return new Token(TokenType.ERROR, lexemeBuffer);
+//                    }
                     break;
                 case 3:
                     if (lang.isIdChar(character)) {
                         nextIdState = 3;
                     } else if (character == '`') {
                         nextIdState = 5;
-                    } else {
-                        return new Token(TokenType.ERROR, lexemeBuffer);
                     }
+//                    else {
+//                        return new Token(TokenType.ERROR, lexemeBuffer);
+//                    }
                     break;
                 case 4:
                     if (character >= '0' && character <= '9') {
@@ -276,10 +287,13 @@ class Lexer {
     }
 
     private Token getNumberToken() {
-
         while (!inputQueue.isEmpty()) {
             char character = inputQueue.peek();
-            if (character < '0' || character > '9') break;
+            if ((character < '0' || character > '9')
+                    && character != '.'
+                    && character != 'p' && character != 'P'
+                    && character != 'e' && character != 'E'
+                    && character != '+' && character != '-') break;
             updateLexeme(character);
         }
 
@@ -294,6 +308,6 @@ class Lexer {
     }
 }
 
-//TODO: add all numeric literals grammar
-//TODO: add all operators grammars
-//TODO: alter states to chars
+//TODO: add all integer literals grammar ***
+//TODO: operators VS punctuation **
+//TODO: errors ?

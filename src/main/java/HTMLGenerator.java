@@ -13,7 +13,7 @@ public class HTMLGenerator {
         // render html string using j2html library
         String html = html(
                 head(
-                        title("Title"),
+                        title("Swift Lexer"),
                         link().withRel("stylesheet").withHref("main.css")
                 ),
                 body(

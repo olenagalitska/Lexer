@@ -72,7 +72,10 @@ public class SwiftLang {
     }
 
     boolean isOperatorChar(char character) {
-        return isOperatorHead(character);
+        return (isOperatorHead(character) || character == '.'
+                || (character >= 'Ĭ' && character <= 'ͯ')
+                || (character >= '᷀' && character <= '᷿')
+                || (character >= '⃐' && character <= '⃟'));
     }
 
     //-----------------------------------------------------------------------------
