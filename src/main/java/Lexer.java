@@ -72,9 +72,11 @@ class Lexer {
 
     void printByType() {
         ArrayList<ArrayList<String>> valuesByType = new ArrayList<>();
-        for (TokenType type : TokenType.values()) {
+        int typesCount = TokenType.values().length;
+        for (int i = 0; i < typesCount; i++) {
             valuesByType.add(new ArrayList<>());
         }
+
         for (Token token : tokens) {
             String value = token.value;
             if (!(token.type == TokenType.COMMENT || token.type == TokenType.LITERAL))
@@ -102,7 +104,7 @@ class Lexer {
 
             switch (character) {
                 case '/':
-                    return getCommentToken(1);
+                    return getCommentToken();
                 case '`':
                     return getIdToken(2);
                 case '$':
@@ -121,7 +123,8 @@ class Lexer {
         }
     }
 
-    private Token getCommentToken(int state) {
+    private Token getCommentToken() {
+        int state = 1;
 
         while (true) {
             int nextCommentState = state;
@@ -162,9 +165,9 @@ class Lexer {
                     return new Token(TokenType.COMMENT, lexemeBuffer);
             }
 
-            inputQueue.poll();
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            updateLexeme(character);
 
+            //TODO: think how to tokenize last comment better
             if (inputQueue.peek() == null) {
                 return new Token(TokenType.COMMENT, lexemeBuffer);
             }
@@ -174,7 +177,6 @@ class Lexer {
 
     private Token getIdToken(int state) {
         while (true) {
-
             int nextIdState = state;
             char character = inputQueue.peek();
 
@@ -201,7 +203,7 @@ class Lexer {
                     }
                     break;
                 case 4:
-                    if (character >= 48 && character <= 57) {
+                    if (character >= '0' && character <= '9') {
                         nextIdState = 4;
                     } else {
                         nextIdState = 5;
@@ -214,35 +216,35 @@ class Lexer {
                     return new Token(TokenType.IDENTIFIER, lexemeBuffer);
             }
 
+            //TODO: think how can i break "id.id" better
             if (lang.isIdChar(character)) {
-                lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-                inputQueue.poll();
+                updateLexeme(character);
             }
+
             if (inputQueue.peek() == null) {
                 return new Token(TokenType.IDENTIFIER, lexemeBuffer);
             }
             state = nextIdState;
         }
-
     }
 
     private Token getPunctuationToken(char character) {
         if (character == '-') {
             if (inputQueue.peek() == '>') {
-                return new Token(TokenType.PUNCTUATION, "->");
+                updateLexeme(character);
+                return new Token(TokenType.PUNCTUATION, lexemeBuffer);
             }
         }
-        return new Token(TokenType.PUNCTUATION, String.valueOf(character));
+        return new Token(TokenType.PUNCTUATION, lexemeBuffer);
     }
 
     private Token getOperatorToken() {
         while (!inputQueue.isEmpty()) {
             char character = inputQueue.peek();
-            if (!lang.isOperatorHead(character)) {
+            if (!lang.isOperatorChar(character)) {
                 break;
             }
-            inputQueue.poll();
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            updateLexeme(character);
         }
         return new Token(TokenType.OPERATOR, lexemeBuffer);
     }
@@ -253,48 +255,45 @@ class Lexer {
         while (character != '"' && !inputQueue.isEmpty()) {
             character = inputQueue.peek();
             if (character == '"') break;
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-            inputQueue.poll();
+            updateLexeme(character);
         }
 
         if (character == '"') {
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-            inputQueue.poll();
+            updateLexeme(character);
         }
         return new Token(TokenType.LITERAL, lexemeBuffer);
     }
 
     private Token getDirectiveToken() {
-        char character;
 
-        while (!lang.isDirective(lexemeBuffer) && !inputQueue.isEmpty()) {
-            character = inputQueue.peek();
+        while (!inputQueue.isEmpty()) {
+            char character = inputQueue.peek();
             if (lang.isDirective(lexemeBuffer)) break;
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-            inputQueue.poll();
+            updateLexeme(character);
         }
 
         return new Token(TokenType.DIRECTIVE, lexemeBuffer);
     }
 
     private Token getNumberToken() {
-        char character;
 
         while (!inputQueue.isEmpty()) {
-            character = inputQueue.peek();
+            char character = inputQueue.peek();
             if (character < '0' || character > '9') break;
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-            inputQueue.poll();
+            updateLexeme(character);
         }
 
         return new Token(TokenType.NUMBER, lexemeBuffer);
-
     }
 
     //-----------------------------------------------------------------------------
 
     private void updateLexeme(char character) {
-        lexemeBuffer = lexemeBuffer.concat(String.valueOf(inputQueue.peek()));
+        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
         inputQueue.poll();
     }
 }
+
+//TODO: add all numeric literals grammar
+//TODO: add all operators grammars
+//TODO: alter states to chars

@@ -1,7 +1,5 @@
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 public class SwiftLang {
@@ -10,20 +8,20 @@ public class SwiftLang {
     private ArrayList<String> directives;
 
     SwiftLang(String keywordsFile, String punctFile, String dirFile) {
-        keywords = new ArrayList<String>();
-        punctuations = new ArrayList<String>();
-        directives = new ArrayList<String>();
+        keywords = new ArrayList<>();
+        punctuations = new ArrayList<>();
+        directives = new ArrayList<>();
 
         readLines(keywordsFile, keywords);
         readLines(punctFile, punctuations);
         readLines(dirFile, directives);
     }
 
-    private void readLines(String filename, List output) {
-        try{
+    private void readLines(String filename, ArrayList<String> output) {
+        try {
 
             Scanner scanner = new Scanner(new File(filename));
-            while (scanner.hasNext()){
+            while (scanner.hasNext()) {
                 output.add(scanner.nextLine());
             }
 
@@ -32,53 +30,54 @@ public class SwiftLang {
         }
     }
 
-    boolean isKeyword(String lexeme){
+    //-----------------------------------------------------------------------------
+
+    //TODO: add all characters for every token type (now only main)
+
+    boolean isKeyword(String lexeme) {
         return keywords.contains(clearEmptyChars(lexeme));
     }
 
-    boolean isDirective(String lexeme){
+    boolean isDirective(String lexeme) {
         return directives.contains(clearEmptyChars(lexeme));
     }
 
-    boolean isPunctuationMark(String lexeme){
+    boolean isPunctuationMark(String lexeme) {
         return punctuations.contains(lexeme) || lexeme.equals("-");
     }
 
-    boolean isLineBreak(char character){
+    boolean isLineBreak(char character) {
         // carriage return or line feed
         return character == 10 || character == 13;
     }
 
     boolean isIdHead(char character) {
         // uppercase letter or lowercase letter
-        if ((character >= 65 && character <= 90) || (character >= 97 && character <= 122)) {
-            return true;
-        }
-
-        // other unicode characters
-        if (character == '_') {
-            return true;
-        }
-
-        return false;
+        return ((character >= 'a' && character <= 'z')
+                || (character >= 'A' && character <= 'Z')
+                || (character == '_'));
     }
 
     boolean isIdChar(char character) {
-        if (isIdHead(character)) return true;
-        if (character >= 48 && character <= 57) return true;
-        return false;
+        return (isIdHead(character) || (character >= '0' && character <= '9'));
     }
 
     boolean isOperatorHead(char character) {
-        char[] operatorHeads = ("/=-+!*%<>&|^~?").toCharArray();
-        for(char head : operatorHeads){
+        char[] operatorHeads = {'/', '=', '-', '+', '!', '*', '%', '<', '>', '&', '|', '^', '~', '?'};
+        for (char head : operatorHeads) {
             if (character == head)
                 return true;
         }
         return false;
     }
 
+    boolean isOperatorChar(char character) {
+        return isOperatorHead(character);
+    }
+
+    //-----------------------------------------------------------------------------
+
     String clearEmptyChars(String input) {
-        return input.replaceAll("\\s+","");
+        return input.replaceAll("\\s+", "");
     }
 }

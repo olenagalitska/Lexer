@@ -23,7 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 import SystemConfiguration
 import Foundation
-
+->
 public enum ReachabilityError: Error {
     case FailedToCreateWithAddress(sockaddr_in)
     case FailedToCreateWithHostname(String)
@@ -317,3 +317,4 @@ fileprivate extension Reachability {
         }
     }
 }
+//end
