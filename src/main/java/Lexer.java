@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -9,26 +8,25 @@ class Lexer {
     private Queue<Character> inputQueue;
     private SwiftLang lang;
 
+    private String lexemeBuffer;
     private ArrayList<Token> tokens;
 
+    //-----------------------------------------------------------------------------
+
     Lexer(String filename) {
-        lang = new SwiftLang("lang/keywords.txt", "lang/punctuation.txt");
-        tokens = new ArrayList<Token>();
+        lang = new SwiftLang("lang/keywords.txt", "lang/punctuation.txt",
+                "lang/directives.txt");
+        tokens = new ArrayList<>();
 
         String inputString = readFileContents(filename);
-        inputQueue = new ArrayBlockingQueue<Character>(inputString.length());
+        inputQueue = new ArrayBlockingQueue<>(inputString.length());
 
         char[] input = inputString.toCharArray();
-        for (int i = 0; i < input.length; i++) {
-            if (input[i] != 0) inputQueue.add(input[i]);
+        for (char character : input) {
+            if (character != 0) inputQueue.add(character);
         }
 
-        while (!inputQueue.isEmpty()) {
-            tokens.add(getToken("", 0));
-        }
-
-        printSequenceOfTokens();
-        System.out.println(lang.isKeyword("import"));
+        tokenize();
     }
 
     private String readFileContents(String filename) {
@@ -51,7 +49,28 @@ class Lexer {
         return result;
     }
 
-    Token getToken(String lexemeBuffer, int state) {
+    private void tokenize() {
+        while (!inputQueue.isEmpty()) {
+            lexemeBuffer = "";
+            Token token = getToken(0);
+            tokens.add(token);
+        }
+    }
+
+    void printSequenceOfTokens() {
+        for (Token token : tokens) {
+            System.out.println("--------------------------------------------------");
+            System.out.println(token.type + " :" + token.value);
+        }
+    }
+
+    void generateHTML() {
+        HTMLGenerator.generate(tokens);
+    }
+
+    //-----------------------------------------------------------------------------
+
+    private Token getToken(int state) {
         while (true) {
             int nextState = state;
             char character = inputQueue.peek();
@@ -60,28 +79,69 @@ class Lexer {
                     if (character == '/') {
                         inputQueue.poll();
                         lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-                        return getCommentToken(lexemeBuffer, 1);
+                        return getCommentToken(1);
                     }
                     if (character == '`') {
                         inputQueue.poll();
                         lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-                        return getIdToken(lexemeBuffer, 2);
+                        return getIdToken(2);
                     }
                     if (character == '$') {
                         inputQueue.poll();
                         lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-                        return getIdToken(lexemeBuffer, 4);
+                        return getIdToken(4);
                     }
-                    if (lang.isIdHead(character)) {
+                    if (character == '"') {
                         inputQueue.poll();
                         lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-                        return getIdToken(lexemeBuffer, 1);
+                        return getStringLiteralToken();
+                    }
+                    if (character == '#') {
+                        inputQueue.poll();
+                        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                        return getDirectiveToken();
+                    }
+                    if (lang.isIdHead(character)) {
+                        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                        inputQueue.poll();
+                        return getIdToken(1);
+                    }
+
+
+                    // TODO: NOT LIKE THAT
+                    // TODO: do i need 0 state at all?
+                    // TODO: CODE REUSE ????
+                    if (lang.isOperatorHead(character)) {
+                        inputQueue.poll();
+                        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                        return getOperatorToken();
+                    }
+                    if (lang.isPunctuationMark(String.valueOf(character))) {
+                        inputQueue.poll();
+                        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                        return getPunctuationToken(character);
+                    }
+//                    if (lang.isPunctuationMark(String.valueOf(character))) {
+//                        if (character == '-') {
+//                            nextState = 1;
+//                        } else {
+//                            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+//                            inputQueue.poll();
+//                            return new Token(TokenType.PUNCTUATION, lexemeBuffer);
+//                        }
+//                    }
+                    break;
+                case 1:
+                    if (character == '>') {
+                        lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                        inputQueue.poll();
+                        return new Token(TokenType.PUNCTUATION, lexemeBuffer);
                     }
                     break;
             }
-            if (!lang.isLineBreak(character)) {
-                lexemeBuffer = lexemeBuffer.concat(String.valueOf(inputQueue.peek()));
-            }
+//            if (!lang.isLineBreak(character)) {
+            lexemeBuffer = lexemeBuffer.concat(String.valueOf(inputQueue.peek()));
+//            }
 
             inputQueue.poll();
             if (inputQueue.peek() == null) {
@@ -91,54 +151,50 @@ class Lexer {
         }
     }
 
-//    Token getKeyword() {
-//        Token keywordToken = new Token();
-//        keywordToken.type = TokenType.KEYWORD;
-//        //TODO: ????
-//
-//        return keywordToken;
-//    }
+    private Token getCommentToken(int state) {
 
-    Token getCommentToken(String lexemeBuffer, int state) {
         while (true) {
             int nextCommentState = state;
             char character = inputQueue.peek();
+
             switch (state) {
                 case 1:
-                    if (character == '/') {
+                    if (character == '/') { // -> "//"
                         nextCommentState = 2;
-                    } else if (character == '*') {
+                    } else if (character == '*') { // -> "/*"
                         nextCommentState = 3;
+                    } else {
+                        return new Token(TokenType.ERROR, lexemeBuffer);
                     }
                     break;
                 case 2:
-                    if (lang.isLineBreak(character)) {
+                    if (lang.isLineBreak(character)) { // end of "//" comment
                         nextCommentState = 5;
                     } else {
                         nextCommentState = 2;
                     }
                     break;
                 case 3:
-                    if (character == '*') {
+                    if (character == '*') {     // -> "...*"
                         nextCommentState = 4;
                     } else {
                         nextCommentState = 3;
                     }
                     break;
                 case 4:
-                    if (character == '/') {
+                    if (character == '/') {     // -> "/* ... */"
                         nextCommentState = 5;
-                    } else {
-                        return new Token(TokenType.ERROR, lexemeBuffer);
+                    } else {                    // -> "...*."
+                        nextCommentState = 3;
                     }
                     break;
                 case 5:
                     return new Token(TokenType.COMMENT, lexemeBuffer);
             }
 
-            if (inputQueue.poll() != 10 || nextCommentState == 3) {
-                lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
-            }
+            inputQueue.poll();
+            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+
             if (inputQueue.peek() == null) {
                 return new Token(TokenType.COMMENT, lexemeBuffer);
             }
@@ -146,10 +202,12 @@ class Lexer {
         }
     }
 
-    Token getIdToken(String lexemeBuffer, int state) {
+    private Token getIdToken(int state) {
         while (true) {
+
             int nextIdState = state;
-            char character = inputQueue.poll();
+            char character = inputQueue.peek();
+
             switch (state) {
                 case 1:
                     if (lang.isIdChar(character)) {
@@ -186,7 +244,10 @@ class Lexer {
                     return new Token(TokenType.IDENTIFIER, lexemeBuffer);
             }
 
-            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            if (lang.isIdChar(character)) {
+                lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+                inputQueue.poll();
+            }
             if (inputQueue.peek() == null) {
                 return new Token(TokenType.IDENTIFIER, lexemeBuffer);
             }
@@ -195,11 +256,48 @@ class Lexer {
 
     }
 
-    void printSequenceOfTokens() {
-        for (Token token : tokens) {
-            System.out.println("--------------------------------------------------");
-            System.out.println(token.type);
-            System.out.println(token.value);
+    private Token getPunctuationToken(char character) {
+        if (character == '-') {
+            if (inputQueue.peek() == '>') {
+                return new Token(TokenType.PUNCTUATION, "->");
+            }
         }
+        return new Token(TokenType.PUNCTUATION, String.valueOf(character));
     }
+
+    private Token getOperatorToken() {
+        return new Token(TokenType.OPERATOR, lexemeBuffer);
+    }
+
+    private Token getStringLiteralToken() {
+        char character = inputQueue.peek();
+        
+        while (character != '"' && !inputQueue.isEmpty()) {
+            character = inputQueue.peek();
+            if (character == '"') break;
+            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            inputQueue.poll();
+        }
+
+        if (character == '"') {
+            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            inputQueue.poll();
+        }
+        return new Token(TokenType.LITERAL, lexemeBuffer);
+    }
+
+    private Token getDirectiveToken() {
+        char character = inputQueue.peek();
+
+        while (!lang.isDirective(lexemeBuffer) && !inputQueue.isEmpty()) {
+            character = inputQueue.peek();
+            if (lang.isDirective(lexemeBuffer)) break;
+            lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
+            inputQueue.poll();
+        }
+
+        return new Token(TokenType.DIRECTIVE, lexemeBuffer);
+    }
+
+
 }

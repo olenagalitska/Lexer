@@ -7,16 +7,19 @@ import java.util.Scanner;
 public class SwiftLang {
     private ArrayList<String> keywords;
     private ArrayList<String> punctuations;
+    private ArrayList<String> directives;
 
-    SwiftLang(String keywordsFile, String punctFile) {
+    SwiftLang(String keywordsFile, String punctFile, String dirFile) {
         keywords = new ArrayList<String>();
         punctuations = new ArrayList<String>();
+        directives = new ArrayList<String>();
 
         readLines(keywordsFile, keywords);
         readLines(punctFile, punctuations);
+        readLines(dirFile, directives);
     }
 
-    void readLines(String filename, List output) {
+    private void readLines(String filename, List output) {
         try{
 
             Scanner scanner = new Scanner(new File(filename));
@@ -30,11 +33,15 @@ public class SwiftLang {
     }
 
     boolean isKeyword(String lexeme){
-        return keywords.contains(lexeme);
+        return keywords.contains(clearEmptyChars(lexeme));
+    }
+
+    boolean isDirective(String lexeme){
+        return directives.contains(clearEmptyChars(lexeme));
     }
 
     boolean isPunctuationMark(String lexeme){
-        return punctuations.contains(lexeme);
+        return punctuations.contains(lexeme) || lexeme.equals("-");
     }
 
     boolean isLineBreak(char character){
@@ -60,5 +67,18 @@ public class SwiftLang {
         if (isIdHead(character)) return true;
         if (character >= 48 && character <= 57) return true;
         return false;
+    }
+
+    boolean isOperatorHead(char character) {
+        char[] operatorHeads = ("/=-+!*%<>&|^~?").toCharArray();
+        for(char head : operatorHeads){
+            if (character == head)
+                return true;
+        }
+        return false;
+    }
+
+    private String clearEmptyChars(String input) {
+        return input.replaceAll("\\s+","");
     }
 }

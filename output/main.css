@@ -1,0 +1,42 @@
+body {
+    white-space: pre;
+    /*background-color: black;*/
+    font-size: 14pt;
+}
+p {
+    display: inline;
+    color: white;
+}
+
+.IDENTIFIER {
+    color: deepskyblue;
+}
+
+.KEYWORD {
+    color: orange;
+}
+
+.PUNCTUATION {
+    color: mediumpurple;
+}
+
+.COMMENT {
+    color: darkgrey;
+}
+
+.ERROR {
+    color: red;
+    text-decoration: underline;
+}
+
+.OPERATOR {
+    color: aquamarine;
+}
+
+.LITERAL {
+    color: green;
+}
+
+.DIRECTIVE {
+    color: deeppink;
+}

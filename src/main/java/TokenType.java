@@ -1,5 +1,6 @@
 public enum TokenType {
     LITERAL,
+    DIRECTIVE,
     COMMENT,
     KEYWORD,
     IDENTIFIER,

@@ -1,0 +1,66 @@
+<html><head><title>Title</title><link rel="stylesheet" href="main.css"></head><body><div id="tokens"><p class="COMMENT">//
+</p><p class="COMMENT">//  CLLocationExtensions.swift
+</p><p class="COMMENT">//  SwifterSwift
+</p><p class="COMMENT">//
+</p><p class="COMMENT">//  Created by Luciano Almeida on 21/04/17.
+</p><p class="COMMENT">//  Copyright © 2017 SwifterSwift
+</p><p class="COMMENT">//
+</p><p class="DIRECTIVE">#if</p><p class="IDENTIFIER"> canImport</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">CoreLocation</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+import</p><p class="IDENTIFIER"> CoreLocation</p><p class="COMMENT">
+
+// MARK: - Methods
+</p><p class="KEYWORD">public</p><p class="KEYWORD"> extension</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+
+	/// SwifterSwift: Calculate the half-way point along a great circle path between the two points.
+</p><p class="COMMENT">	///
+</p><p class="COMMENT">	/// - Parameters:
+</p><p class="COMMENT">	///   - start: Start location.
+</p><p class="COMMENT">	///   - end: End location.
+</p><p class="COMMENT">	/// - Returns: Location that represents the half-way point.
+</p><p class="KEYWORD">	public</p><p class="KEYWORD"> static</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">start</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+		let</p><p class="IDENTIFIER"> lat1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> start</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> long1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> start</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> lat2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> long2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="COMMENT">0
+
+		// Formula
+</p><p class="COMMENT">		//    Bx = cos φ2 ⋅ cos Δλ
+</p><p class="COMMENT">		//    By = cos φ2 ⋅ sin Δλ
+</p><p class="COMMENT">		//    φm = atan2( sin φ1 + sin φ2, √(cos φ1 + Bx)² + By² )
+</p><p class="COMMENT">		//    λm = λ1 + atan2(By, cos(φ1)+Bx)
+</p><p class="COMMENT">		// Source: http://www.movable-type.co.uk/scripts/latlong.html
+</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> bxLoc</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+		let</p><p class="IDENTIFIER"> byLoc</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+		let</p><p class="IDENTIFIER"> mlat</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> sqrt</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">byLoc</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> byLoc</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+		let</p><p class="IDENTIFIER"> mlong</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">byLoc</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+
+		return</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">latitude</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">mlat</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> longitude</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">mlong</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+	/// SwifterSwift: Calculate the half-way point along a great circle path between self and another points.
+</p><p class="COMMENT">	///
+</p><p class="COMMENT">	/// - Parameter point: End location.
+</p><p class="COMMENT">	/// - Returns: Location that represents the half-way point.
+</p><p class="KEYWORD">	public</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">to</p><p class="IDENTIFIER"> point</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+		return</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">start</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> self</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> point</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+	/// SwifterSwift: Calculates the bearing to another CLLocation.
+</p><p class="COMMENT">	///
+</p><p class="COMMENT">	/// - Parameters:
+</p><p class="COMMENT">	///   - destination: Location to calculate bearing.
+</p><p class="COMMENT">	/// - Returns: Calculated bearing degrees in the range 0° ... 360°
+</p><p class="KEYWORD">	public</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> bearing</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">to</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+		// http://stackoverflow.com/questions/3925942/cllocation-category-for-calculating-bearing-w-haversine-function
+</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> lat1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> long1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> lat2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
+		let</p><p class="IDENTIFIER"> long2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="COMMENT">0
+
+		//Formula: θ = atan2( sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ )
+</p><p class="COMMENT">		//Source: http://www.movable-type.co.uk/scripts/latlong.html
+</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> rads</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">
+			sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER">
+			cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+		let</p><p class="IDENTIFIER"> degrees</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> rads</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="KEYWORD">
+
+		return</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">degrees</p><p class="OPERATOR">+</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">truncatingRemainder</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">dividingBy</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="DIRECTIVE">
+#endif</p></div></body></html>
