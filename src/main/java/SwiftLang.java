@@ -78,7 +78,7 @@ public class SwiftLang {
         return false;
     }
 
-    private String clearEmptyChars(String input) {
+    String clearEmptyChars(String input) {
         return input.replaceAll("\\s+","");
     }
 }

@@ -1,66 +1,250 @@
-<html><head><title>Title</title><link rel="stylesheet" href="main.css"></head><body><div id="tokens"><p class="COMMENT">//
-</p><p class="COMMENT">//  CLLocationExtensions.swift
-</p><p class="COMMENT">//  SwifterSwift
-</p><p class="COMMENT">//
-</p><p class="COMMENT">//  Created by Luciano Almeida on 21/04/17.
-</p><p class="COMMENT">//  Copyright © 2017 SwifterSwift
-</p><p class="COMMENT">//
-</p><p class="DIRECTIVE">#if</p><p class="IDENTIFIER"> canImport</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">CoreLocation</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
-import</p><p class="IDENTIFIER"> CoreLocation</p><p class="COMMENT">
+<html><head><title>Title</title><link rel="stylesheet" href="main.css"></head><body><div id="tokens"><p class="COMMENT">/*
+Copyright (c) 2014, Ashley Mills
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+*/</p><p class="KEYWORD">
 
-// MARK: - Methods
-</p><p class="KEYWORD">public</p><p class="KEYWORD"> extension</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+import</p><p class="IDENTIFIER"> SystemConfiguration</p><p class="KEYWORD">
+import</p><p class="IDENTIFIER"> Foundation</p><p class="KEYWORD">
 
-	/// SwifterSwift: Calculate the half-way point along a great circle path between the two points.
-</p><p class="COMMENT">	///
-</p><p class="COMMENT">	/// - Parameters:
-</p><p class="COMMENT">	///   - start: Start location.
-</p><p class="COMMENT">	///   - end: End location.
-</p><p class="COMMENT">	/// - Returns: Location that represents the half-way point.
-</p><p class="KEYWORD">	public</p><p class="KEYWORD"> static</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">start</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
-		let</p><p class="IDENTIFIER"> lat1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> start</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> long1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> start</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> lat2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> long2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="COMMENT">0
+public</p><p class="KEYWORD"> enum</p><p class="IDENTIFIER"> ReachabilityError</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Error</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+    case</p><p class="IDENTIFIER"> FailedToCreateWithAddress</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">sockaddr_in</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    case</p><p class="IDENTIFIER"> FailedToCreateWithHostname</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">String</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    case</p><p class="IDENTIFIER"> UnableToSetCallback</p><p class="KEYWORD">
+    case</p><p class="IDENTIFIER"> UnableToSetDispatchQueue</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> unavailable</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> renamed</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;Notification.Name.reachabilityChanged&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+public</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> ReachabilityChangedNotification</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> NSNotification</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">Name</p><p class="PUNCTUATION">(</p><p class="LITERAL">&quot;ReachabilityChangedNotification&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
 
-		// Formula
-</p><p class="COMMENT">		//    Bx = cos φ2 ⋅ cos Δλ
-</p><p class="COMMENT">		//    By = cos φ2 ⋅ sin Δλ
-</p><p class="COMMENT">		//    φm = atan2( sin φ1 + sin φ2, √(cos φ1 + Bx)² + By² )
-</p><p class="COMMENT">		//    λm = λ1 + atan2(By, cos(φ1)+Bx)
-</p><p class="COMMENT">		// Source: http://www.movable-type.co.uk/scripts/latlong.html
-</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> bxLoc</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
-		let</p><p class="IDENTIFIER"> byLoc</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
-		let</p><p class="IDENTIFIER"> mlat</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> sqrt</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">byLoc</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> byLoc</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
-		let</p><p class="IDENTIFIER"> mlong</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">byLoc</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> +</p><p class="IDENTIFIER"> bxLoc</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+extension</p><p class="IDENTIFIER"> Notification</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">Name</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> static</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> reachabilityChanged</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Notification</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">Name</p><p class="PUNCTUATION">(</p><p class="LITERAL">&quot;reachabilityChanged&quot;</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
 
-		return</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">latitude</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">mlat</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> longitude</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">mlong</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+func</p><p class="IDENTIFIER"> callback</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachability</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachability</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachabilityFlags</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> info</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> UnsafeMutableRawPointer</p><p class="OPERATOR">?</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+    guard</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> info</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> info</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
 
-	/// SwifterSwift: Calculate the half-way point along a great circle path between self and another points.
-</p><p class="COMMENT">	///
-</p><p class="COMMENT">	/// - Parameter point: End location.
-</p><p class="COMMENT">	/// - Returns: Location that represents the half-way point.
-</p><p class="KEYWORD">	public</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">to</p><p class="IDENTIFIER"> point</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
-		return</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">midLocation</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">start</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> self</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> end</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> point</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+    let</p><p class="IDENTIFIER"> reachability</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Unmanaged</p><p class="OPERATOR">&lt;</p><p class="IDENTIFIER">Reachability</p><p class="OPERATOR">&gt;</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">fromOpaque</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">info</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">takeUnretainedValue</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="IDENTIFIER">
+    reachability</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachabilityChanged</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
 
-	/// SwifterSwift: Calculates the bearing to another CLLocation.
-</p><p class="COMMENT">	///
-</p><p class="COMMENT">	/// - Parameters:
-</p><p class="COMMENT">	///   - destination: Location to calculate bearing.
-</p><p class="COMMENT">	/// - Returns: Calculated bearing degrees in the range 0° ... 360°
-</p><p class="KEYWORD">	public</p><p class="KEYWORD"> func</p><p class="IDENTIFIER"> bearing</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">to</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CLLocation</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="OPERATOR">&gt;</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">{</p><p class="COMMENT">
-		// http://stackoverflow.com/questions/3925942/cllocation-category-for-calculating-bearing-w-haversine-function
-</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> lat1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> long1</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> lat2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">latitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">0
-		let</p><p class="IDENTIFIER"> long2</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> destination</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">coordinate</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">longitude</p><p class="ERROR"> /</p><p class="PUNCTUATION">.</p><p class="COMMENT">0
+public</p><p class="KEYWORD"> class</p><p class="IDENTIFIER"> Reachability</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
 
-		//Formula: θ = atan2( sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ )
-</p><p class="COMMENT">		//Source: http://www.movable-type.co.uk/scripts/latlong.html
-</p><p class="KEYWORD">		let</p><p class="IDENTIFIER"> rads</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> atan2</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">
-			sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER">
-			cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> sin</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat1</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">lat2</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> *</p><p class="IDENTIFIER"> cos</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">long2</p><p class="OPERATOR"> -</p><p class="IDENTIFIER"> long1</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
-		let</p><p class="IDENTIFIER"> degrees</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> rads</p><p class="OPERATOR"> *</p><p class="ERROR"> 180 /</p><p class="IDENTIFIER"> Double</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">pi</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> typealias</p><p class="IDENTIFIER"> NetworkReachable</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">Reachability</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -&gt;</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> typealias</p><p class="IDENTIFIER"> NetworkUnreachable</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">Reachability</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> -&gt;</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> unavailable</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> renamed</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;Connection&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> enum</p><p class="IDENTIFIER"> NetworkStatus</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CustomStringConvertible</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        case</p><p class="IDENTIFIER"> notReachable</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> reachableViaWiFi</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> reachableViaWWAN</p><p class="KEYWORD">
+        public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> description</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> String</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            switch</p><p class="KEYWORD"> self</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachableViaWWAN</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;Cellular&quot;</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachableViaWiFi</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;WiFi&quot;</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">notReachable</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;No Connection&quot;</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
 
-		return</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">degrees</p><p class="OPERATOR">+</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">truncatingRemainder</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">dividingBy</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="DIRECTIVE">
-#endif</p></div></body></html>
+    public</p><p class="KEYWORD"> enum</p><p class="IDENTIFIER"> Connection</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> CustomStringConvertible</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        case</p><p class="KEYWORD"> none</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> wifi</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> cellular</p><p class="KEYWORD">
+        public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> description</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> String</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            switch</p><p class="KEYWORD"> self</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">cellular</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;Cellular&quot;</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">wifi</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;WiFi&quot;</p><p class="KEYWORD">
+            case</p><p class="PUNCTUATION">.</p><p class="KEYWORD">none</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> return</p><p class="LITERAL"> &quot;No Connection&quot;</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> whenReachable</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> NetworkReachable</p><p class="OPERATOR">?</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> whenUnreachable</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> NetworkUnreachable</p><p class="OPERATOR">?</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> deprecated</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 4</p><p class="PUNCTUATION">.</p><p class="NUMBER">0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> renamed</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;allowsCellularConnection&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> reachableOnWWAN</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="OPERATOR"> =</p><p class="KEYWORD"> true</p><p class="COMMENT">
+
+    /// Set to `false` to force Reachability.connection to .none when on cellular connection (default value `true`)
+</p><p class="KEYWORD">    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> allowsCellularConnection</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="COMMENT">
+
+    // The notification center on which &quot;reachability changed&quot; events are being posted
+</p><p class="KEYWORD">    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> notificationCenter</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> NotificationCenter</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> NotificationCenter</p><p class="PUNCTUATION">.</p><p class="KEYWORD">default</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> deprecated</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 4</p><p class="PUNCTUATION">.</p><p class="NUMBER">0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> renamed</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;connection.description&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> currentReachabilityString</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> String</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="LITERAL"> &quot;\(connection)&quot;</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> unavailable</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> renamed</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;connection&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> currentReachabilityStatus</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Connection</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> connection</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    public</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> connection</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Connection</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        guard</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="PUNCTUATION">.</p><p class="KEYWORD">none</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+        // If we&#x27;re reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
+</p><p class="KEYWORD">        guard</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">wifi</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        var</p><p class="IDENTIFIER"> connection</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> Connection</p><p class="PUNCTUATION">.</p><p class="KEYWORD">none</p><p class="KEYWORD">
+
+        if</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">isConnectionRequiredFlagSet</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+            connection</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">wifi</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        if</p><p class="IDENTIFIER"> isConnectionOnTrafficOrDemandFlagSet</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            if</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">isInterventionRequiredFlagSet</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+                connection</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">wifi</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        if</p><p class="IDENTIFIER"> isOnWWANFlagSet</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            if</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">allowsCellularConnection</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+                connection</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">.</p><p class="KEYWORD">none</p><p class="PUNCTUATION">}</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+                connection</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">cellular</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        return</p><p class="IDENTIFIER"> connection</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    fileprivate</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> previousFlags</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachabilityFlags</p><p class="OPERATOR">?</p><p class="KEYWORD">
+
+    fileprivate</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="OPERATOR"> =</p><p class="PUNCTUATION">{</p><p class="DIRECTIVE">
+        #if</p><p class="IDENTIFIER"> targetEnvironment</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">simulator</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            return</p><p class="KEYWORD"> false</p><p class="DIRECTIVE">
+        #else</p><p class="KEYWORD">
+            return</p><p class="KEYWORD"> true</p><p class="DIRECTIVE">
+        #endif</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+
+    fileprivate</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> notifierRunning</p><p class="OPERATOR"> =</p><p class="KEYWORD"> false</p><p class="KEYWORD">
+    fileprivate</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> reachabilityRef</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachability</p><p class="KEYWORD">
+
+    fileprivate</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> reachabilitySerialQueue</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> DispatchQueue</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">label</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;uk.co.ashleymills.reachability&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+
+    fileprivate</p><p class="KEYWORD"> var</p><p class="IDENTIFIER"> usingHostname</p><p class="OPERATOR"> =</p><p class="KEYWORD"> false</p><p class="KEYWORD">
+
+    required</p><p class="KEYWORD"> public</p><p class="KEYWORD"> init</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachability</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> usingHostname</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="OPERATOR"> =</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+        allowsCellularConnection</p><p class="OPERATOR"> =</p><p class="KEYWORD"> true</p><p class="KEYWORD">
+        self</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachabilityRef</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> reachabilityRef</p><p class="KEYWORD">
+        self</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">usingHostname</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> usingHostname</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    public</p><p class="KEYWORD"> convenience</p><p class="KEYWORD"> init</p><p class="OPERATOR">?</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">hostname</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> String</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        guard</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> ref</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> SCNetworkReachabilityCreateWithName</p><p class="PUNCTUATION">(</p><p class="KEYWORD">nil</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> hostname</p><p class="PUNCTUATION">)</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+        self</p><p class="PUNCTUATION">.</p><p class="KEYWORD">init</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> ref</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> usingHostname</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> true</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    public</p><p class="KEYWORD"> convenience</p><p class="KEYWORD"> init</p><p class="OPERATOR">?</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        var</p><p class="IDENTIFIER"> zeroAddress</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> sockaddr</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="IDENTIFIER">
+        zeroAddress</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">sa_len</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> UInt8</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">MemoryLayout</p><p class="OPERATOR">&lt;</p><p class="IDENTIFIER">sockaddr</p><p class="OPERATOR">&gt;</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">size</p><p class="PUNCTUATION">)</p><p class="IDENTIFIER">
+        zeroAddress</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">sa_family</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> sa_family_t</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">AF_INET</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+
+        guard</p><p class="KEYWORD"> let</p><p class="IDENTIFIER"> ref</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> SCNetworkReachabilityCreateWithAddress</p><p class="PUNCTUATION">(</p><p class="KEYWORD">nil</p><p class="PUNCTUATION">,</p><p class="OPERATOR"> &amp;</p><p class="IDENTIFIER">zeroAddress</p><p class="PUNCTUATION">)</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        self</p><p class="PUNCTUATION">.</p><p class="KEYWORD">init</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> ref</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    deinit</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+        stopNotifier</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+public</p><p class="KEYWORD"> extension</p><p class="IDENTIFIER"> Reachability</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+
+    // MARK: - *** Notifier methods ***
+</p><p class="KEYWORD">    func</p><p class="IDENTIFIER"> startNotifier</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD"> throws</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        guard</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">notifierRunning</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        var</p><p class="IDENTIFIER"> context</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> SCNetworkReachabilityContext</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">version</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> info</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> retain</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> release</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> copyDescription</p><p class="PUNCTUATION">:</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">)</p><p class="IDENTIFIER">
+        context</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">info</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> UnsafeMutableRawPointer</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">Unmanaged</p><p class="OPERATOR">&lt;</p><p class="IDENTIFIER">Reachability</p><p class="OPERATOR">&gt;</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">passUnretained</p><p class="PUNCTUATION">(</p><p class="KEYWORD">self</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">toOpaque</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+        if</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">SCNetworkReachabilitySetCallback</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> callback</p><p class="PUNCTUATION">,</p><p class="OPERATOR"> &amp;</p><p class="IDENTIFIER">context</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+            stopNotifier</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            throw</p><p class="IDENTIFIER"> ReachabilityError</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">UnableToSetCallback</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        if</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">SCNetworkReachabilitySetDispatchQueue</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> reachabilitySerialQueue</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+            stopNotifier</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            throw</p><p class="IDENTIFIER"> ReachabilityError</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">UnableToSetDispatchQueue</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+        // Perform an initial check
+</p><p class="IDENTIFIER">        reachabilitySerialQueue</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">async</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            self</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachabilityChanged</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="IDENTIFIER">
+
+        notifierRunning</p><p class="OPERATOR"> =</p><p class="KEYWORD"> true</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    func</p><p class="IDENTIFIER"> stopNotifier</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        defer</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER"> notifierRunning</p><p class="OPERATOR"> =</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">}</p><p class="IDENTIFIER">
+
+        SCNetworkReachabilitySetCallback</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">,</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">,</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">)</p><p class="IDENTIFIER">
+        SCNetworkReachabilitySetDispatchQueue</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">,</p><p class="KEYWORD"> nil</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+    // MARK: - *** Connection test methods ***
+</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> deprecated</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 4</p><p class="PUNCTUATION">.</p><p class="NUMBER">0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> message</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;Please use `connection != .none`&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isReachable</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        guard</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        if</p><p class="IDENTIFIER"> isConnectionRequiredAndTransientFlagSet</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            return</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        if</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            if</p><p class="IDENTIFIER"> isOnWWANFlagSet</p><p class="OPERATOR"> &amp;&amp;</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">reachableOnWWAN</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+                // We don&#x27;t want to connect when on cellular connection
+</p><p class="KEYWORD">                return</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        return</p><p class="KEYWORD"> true</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> deprecated</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 4</p><p class="PUNCTUATION">.</p><p class="NUMBER">0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> message</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;Please use `connection == .cellular`&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isReachableViaWWAN</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+        // Check we&#x27;re not on the simulator, we&#x27;re REACHABLE and check we&#x27;re on WWAN
+</p><p class="KEYWORD">        return</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="OPERATOR"> &amp;&amp;</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="OPERATOR"> &amp;&amp;</p><p class="IDENTIFIER"> isOnWWANFlagSet</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">@</p><p class="IDENTIFIER">available</p><p class="PUNCTUATION">(</p><p class="OPERATOR">*</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> deprecated</p><p class="PUNCTUATION">:</p><p class="NUMBER"> 4</p><p class="PUNCTUATION">.</p><p class="NUMBER">0</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> message</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;Please use `connection == .wifi`&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isReachableViaWiFi</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="COMMENT">
+        // Check we&#x27;re reachable
+</p><p class="KEYWORD">        guard</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="KEYWORD"> false</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+        // If reachable we&#x27;re reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
+</p><p class="KEYWORD">        guard</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="KEYWORD"> true</p><p class="PUNCTUATION">}</p><p class="COMMENT">
+
+        // Check we&#x27;re NOT on WWAN
+</p><p class="KEYWORD">        return</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">isOnWWANFlagSet</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    var</p><p class="IDENTIFIER"> description</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> String</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> W</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isRunningOnDevice</p><p class="OPERATOR"> ?</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">isOnWWANFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;W&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;X&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> R</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;R&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> c</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isConnectionRequiredFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;c&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> t</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isTransientConnectionFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;t&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> i</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isInterventionRequiredFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;i&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> C</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isConnectionOnTrafficFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;C&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> D</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isConnectionOnDemandFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;D&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> l</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isLocalAddressFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;l&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+        let</p><p class="IDENTIFIER"> d</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> isDirectFlagSet</p><p class="OPERATOR"> ?</p><p class="LITERAL"> &quot;d&quot;</p><p class="PUNCTUATION">:</p><p class="LITERAL"> &quot;-&quot;</p><p class="KEYWORD">
+
+        return</p><p class="LITERAL"> &quot;\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)&quot;</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+fileprivate</p><p class="KEYWORD"> extension</p><p class="IDENTIFIER"> Reachability</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+    func</p><p class="IDENTIFIER"> reachabilityChanged</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        guard</p><p class="IDENTIFIER"> previousFlags</p><p class="OPERATOR"> !=</p><p class="IDENTIFIER"> flags</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD"> return</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+        let</p><p class="IDENTIFIER"> block</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> connection</p><p class="OPERATOR"> !=</p><p class="PUNCTUATION">.</p><p class="KEYWORD">none</p><p class="OPERATOR"> ?</p><p class="IDENTIFIER"> whenReachable</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> whenUnreachable</p><p class="IDENTIFIER">
+
+        DispatchQueue</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">main</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">async</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            if</p><p class="KEYWORD"> self</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">usingHostname</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+                print</p><p class="PUNCTUATION">(</p><p class="LITERAL">&quot;USING HOSTNAME ABOUT TO CALL BLOCK&quot;</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="IDENTIFIER">
+            block</p><p class="OPERATOR">?</p><p class="PUNCTUATION">(</p><p class="KEYWORD">self</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            self</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">notificationCenter</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">post</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">name</p><p class="PUNCTUATION">:</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachabilityChanged</p><p class="PUNCTUATION">,</p><p class="IDENTIFIER"> object</p><p class="PUNCTUATION">:</p><p class="KEYWORD">self</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="IDENTIFIER">
+
+        previousFlags</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    var</p><p class="IDENTIFIER"> isOnWWANFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="DIRECTIVE">
+        #if</p><p class="IDENTIFIER"> os</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">iOS</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">isWWAN</p><p class="PUNCTUATION">)</p><p class="DIRECTIVE">
+        #else</p><p class="KEYWORD">
+            return</p><p class="KEYWORD"> false</p><p class="DIRECTIVE">
+        #endif</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isReachableFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">reachable</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isConnectionRequiredFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionRequired</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isInterventionRequiredFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">interventionRequired</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isConnectionOnTrafficFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionOnTraffic</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isConnectionOnDemandFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionOnDemand</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isConnectionOnTrafficOrDemandFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="OPERATOR"> !</p><p class="IDENTIFIER">flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">intersection</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">[</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionOnTraffic</p><p class="PUNCTUATION">,</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionOnDemand</p><p class="PUNCTUATION">]</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">isEmpty</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isTransientConnectionFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">transientConnection</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isLocalAddressFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">isLocalAddress</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isDirectFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">contains</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">isDirect</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+    var</p><p class="IDENTIFIER"> isConnectionRequiredAndTransientFlagSet</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> Bool</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">intersection</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">[</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionRequired</p><p class="PUNCTUATION">,</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">transientConnection</p><p class="PUNCTUATION">]</p><p class="PUNCTUATION">)</p><p class="OPERATOR"> ==</p><p class="PUNCTUATION">[</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">connectionRequired</p><p class="PUNCTUATION">,</p><p class="PUNCTUATION">.</p><p class="IDENTIFIER">transientConnection</p><p class="PUNCTUATION">]</p><p class="PUNCTUATION">}</p><p class="KEYWORD">
+
+    var</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">:</p><p class="IDENTIFIER"> SCNetworkReachabilityFlags</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+        var</p><p class="IDENTIFIER"> flags</p><p class="OPERATOR"> =</p><p class="IDENTIFIER"> SCNetworkReachabilityFlags</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+        if</p><p class="IDENTIFIER"> SCNetworkReachabilityGetFlags</p><p class="PUNCTUATION">(</p><p class="IDENTIFIER">reachabilityRef</p><p class="PUNCTUATION">,</p><p class="OPERATOR"> &amp;</p><p class="IDENTIFIER">flags</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">{</p><p class="IDENTIFIER">
+            print</p><p class="PUNCTUATION">(</p><p class="LITERAL">&quot;Returning flags \(flags)&quot;</p><p class="PUNCTUATION">)</p><p class="KEYWORD">
+            return</p><p class="IDENTIFIER"> flags</p><p class="PUNCTUATION">}</p><p class="KEYWORD"> else</p><p class="PUNCTUATION">{</p><p class="KEYWORD">
+            return</p><p class="IDENTIFIER"> SCNetworkReachabilityFlags</p><p class="PUNCTUATION">(</p><p class="PUNCTUATION">)</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p><p class="PUNCTUATION">}</p></div></body></html>

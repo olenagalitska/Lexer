@@ -3,5 +3,6 @@ public class Main {
         Lexer lexer = new Lexer("input/input.txt");
         lexer.generateHTML();
         lexer.printSequenceOfTokens();
+        lexer.printByType();
     }
 }

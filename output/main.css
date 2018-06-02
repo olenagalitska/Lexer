@@ -1,7 +1,8 @@
 body {
     white-space: pre;
-    /*background-color: black;*/
-    font-size: 14pt;
+    background-color: #212121;
+    font-family: Menlo;
+    font-size: 12pt;
 }
 p {
     display: inline;
@@ -9,15 +10,15 @@ p {
 }
 
 .IDENTIFIER {
-    color: deepskyblue;
+    color: floralwhite;
 }
 
 .KEYWORD {
-    color: orange;
+    color: #db789f;
 }
 
 .PUNCTUATION {
-    color: mediumpurple;
+    color: #89a8f7;
 }
 
 .COMMENT {
@@ -25,7 +26,7 @@ p {
 }
 
 .ERROR {
-    color: red;
+    color: #e74d67;
     text-decoration: underline;
 }
 
@@ -34,9 +35,13 @@ p {
 }
 
 .LITERAL {
-    color: green;
+    color: #afc974;
 }
 
 .DIRECTIVE {
-    color: deeppink;
+    color: #ffa158;
+}
+
+.NUMBER {
+    color: #28d8f7;
 }
