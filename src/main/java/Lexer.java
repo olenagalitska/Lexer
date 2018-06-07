@@ -53,6 +53,7 @@ class Lexer {
         while (!inputQueue.isEmpty()) {
             lexemeBuffer = "";
             Token token = getToken();
+            token.value = lang.clearEmptyChars(token.value);
             tokens.add(token);
         }
     }
@@ -118,14 +119,14 @@ class Lexer {
                     return getDirectiveToken();
                 case '.':
                     if (lang.isOperatorChar(inputQueue.peek()))
-                        return getOperatorToken();
+                        return getOperatorToken(true);
                 case '-':
                     if (inputQueue.peek() >= '0' && inputQueue.peek() <= '9')
                         return getNumberToken();
             }
 
             if (lang.isIdHead(character)) return getIdToken(1);
-            if (lang.isOperatorHead(character)) return getOperatorToken();
+            if (lang.isOperatorHead(character)) return getOperatorToken(false);
             if (lang.isPunctuationMark(String.valueOf(character))) return getPunctuationToken(character);
             if (character >= '0' && character <= '9') return getNumberToken();
             if (inputQueue.peek() == null) return new Token(TokenType.EOF, "eof");
@@ -229,7 +230,7 @@ class Lexer {
             }
 
             //TODO: think how can i break "id.id" better
-            if (lang.isIdChar(character)) {
+            if (lang.isIdChar(character) || character == '`') {
                 updateLexeme(character);
             }
 
@@ -250,10 +251,10 @@ class Lexer {
         return new Token(TokenType.PUNCTUATION, lexemeBuffer);
     }
 
-    private Token getOperatorToken() {
+    private Token getOperatorToken(boolean canContainDot) {
         while (!inputQueue.isEmpty()) {
             char character = inputQueue.peek();
-            if (!lang.isOperatorChar(character)) {
+            if (!(lang.isOperatorChar(character) || (character == '.' && canContainDot))) {
                 break;
             }
             updateLexeme(character);
@@ -272,8 +273,32 @@ class Lexer {
 
         if (character == '"') {
             updateLexeme(character);
+
+            // third " in a row
+            if (inputQueue.peek() == '"')
+                updateLexeme(inputQueue.peek());
+                return getMultilineStringLiteral();
         }
-        return new Token(TokenType.LITERAL, lexemeBuffer);
+        return new Token(TokenType.LITERAL, lexemeBuffer.replaceAll("\"", ""));
+    }
+
+    // fix
+    private Token getMultilineStringLiteral(){
+        char character = inputQueue.peek();
+
+        while (character != '"' && !inputQueue.isEmpty()) {
+            character = inputQueue.peek();
+//            if (character == '"') break;
+            updateLexeme(character);
+        }
+
+        if (character == '"') {
+            updateLexeme(character);
+            if (inputQueue.peek() == '"') {
+                updateLexeme(inputQueue.peek());
+            }
+        }
+        return new Token(TokenType.LITERAL, lexemeBuffer.replaceAll("\"", ""));
     }
 
     private Token getDirectiveToken() {
@@ -309,6 +334,10 @@ class Lexer {
     }
 }
 
-//TODO: add all integer literals grammar ***
-//TODO: operators VS punctuation **
-//TODO: errors ?
+//TODO: errors
+//TODO: multiline literals
+//TODO: escape characters
+
+// прибрала пробільні символи з токенів
+// прибрала "" з токенів-літералів
+// виправила оператори з крапками (оператор може містити крапку тільки якщо він з неї починається)

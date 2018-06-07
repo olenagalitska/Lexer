@@ -32,8 +32,6 @@ public class SwiftLang {
 
     //-----------------------------------------------------------------------------
 
-    //TODO: add all characters for every token type (now only main)
-
     boolean isKeyword(String lexeme) {
         return keywords.contains(clearEmptyChars(lexeme));
     }
@@ -72,7 +70,7 @@ public class SwiftLang {
     }
 
     boolean isOperatorChar(char character) {
-        return (isOperatorHead(character) || character == '.'
+        return (isOperatorHead(character)
                 || (character >= 'Ĭ' && character <= 'ͯ')
                 || (character >= '᷀' && character <= '᷿')
                 || (character >= '⃐' && character <= '⃟'));
@@ -81,6 +79,7 @@ public class SwiftLang {
     //-----------------------------------------------------------------------------
 
     String clearEmptyChars(String input) {
-        return input.replaceAll("\\s+", "");
+        // remove edge whitespaces
+        return input.trim();
     }
 }
