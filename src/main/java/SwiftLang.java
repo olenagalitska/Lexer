@@ -33,11 +33,11 @@ public class SwiftLang {
     //-----------------------------------------------------------------------------
 
     boolean isKeyword(String lexeme) {
-        return keywords.contains(clearEmptyChars(lexeme));
+        return keywords.contains(lexeme.trim());
     }
 
     boolean isDirective(String lexeme) {
-        return directives.contains(clearEmptyChars(lexeme));
+        return directives.contains(lexeme.trim());
     }
 
     boolean isPunctuationMark(String lexeme) {
@@ -76,10 +76,4 @@ public class SwiftLang {
                 || (character >= '⃐' && character <= '⃟'));
     }
 
-    //-----------------------------------------------------------------------------
-
-    String clearEmptyChars(String input) {
-        // remove edge whitespaces
-        return input.trim();
-    }
 }

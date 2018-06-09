@@ -7,5 +7,6 @@ public enum TokenType {
     IDENTIFIER,
     OPERATOR,
     PUNCTUATION,
-    EOF
+    EOF,
+    ERROR
 }

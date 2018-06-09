@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 class Lexer {
     private Queue<Character> inputQueue;
     private SwiftLang lang;
@@ -53,7 +55,7 @@ class Lexer {
         while (!inputQueue.isEmpty()) {
             lexemeBuffer = "";
             Token token = getToken();
-            token.value = lang.clearEmptyChars(token.value);
+            token.value = token.value.trim();
             tokens.add(token);
         }
     }
@@ -81,7 +83,7 @@ class Lexer {
         for (Token token : tokens) {
             String value = token.value;
             if (!(token.type == TokenType.COMMENT || token.type == TokenType.LITERAL))
-                value = lang.clearEmptyChars(token.value);
+                value = token.value.trim();
             if (!valuesByType.get(token.type.ordinal()).contains(value))
                 valuesByType.get(token.type.ordinal()).add(value);
         }
@@ -114,7 +116,9 @@ class Lexer {
                 case '$':
                     return getIdToken(4);
                 case '"':
-                    return getStringLiteralToken();
+                    if (inputQueue.peek() == '"')
+                        return getMultilineStringLiteral();
+                    else return getStringLiteralToken();
                 case '#':
                     return getDirectiveToken();
                 case '.':
@@ -147,9 +151,9 @@ class Lexer {
                     } else if (character == '*') { // -> "/*"
                         nextCommentState = 3;
                     }
-//                    else {
-//                        return new Token(TokenType.ERROR, lexemeBuffer);
-//                    }
+                    else {
+                        return new Token(TokenType.ERROR, lexemeBuffer);
+                    }
                     break;
                 case 2:
                     if (lang.isLineBreak(character)) { // end of "//" comment
@@ -201,9 +205,9 @@ class Lexer {
                     if (lang.isIdHead(character)) {
                         nextIdState = 3;
                     }
-//                    else {
-//                        return new Token(TokenType.ERROR, lexemeBuffer);
-//                    }
+                    else {
+                        return new Token(TokenType.ERROR, lexemeBuffer);
+                    }
                     break;
                 case 3:
                     if (lang.isIdChar(character)) {
@@ -211,9 +215,9 @@ class Lexer {
                     } else if (character == '`') {
                         nextIdState = 5;
                     }
-//                    else {
-//                        return new Token(TokenType.ERROR, lexemeBuffer);
-//                    }
+                    else {
+                        return new Token(TokenType.ERROR, lexemeBuffer);
+                    }
                     break;
                 case 4:
                     if (character >= '0' && character <= '9') {
@@ -263,9 +267,15 @@ class Lexer {
     }
 
     private Token getStringLiteralToken() {
+        if (getPreviousToken().type == TokenType.LITERAL
+                || getPreviousToken().type == TokenType.IDENTIFIER
+                || getPreviousToken().type == TokenType.KEYWORD) {
+            return new Token(TokenType.ERROR, lexemeBuffer);
+        }
+
         char character = inputQueue.peek();
 
-        while (character != '"' && !inputQueue.isEmpty()) {
+        while (!inputQueue.isEmpty()) {
             character = inputQueue.peek();
             if (character == '"') break;
             updateLexeme(character);
@@ -273,32 +283,62 @@ class Lexer {
 
         if (character == '"') {
             updateLexeme(character);
-
-            // third " in a row
-            if (inputQueue.peek() == '"')
-                updateLexeme(inputQueue.peek());
-                return getMultilineStringLiteral();
-        }
-        return new Token(TokenType.LITERAL, lexemeBuffer.replaceAll("\"", ""));
+        } else return new Token(TokenType.ERROR, lexemeBuffer);
+        return new Token(TokenType.LITERAL, StringEscapeUtils.unescapeJava(
+                lexemeBuffer.replaceAll("\"", "")));
     }
 
-    // fix
-    private Token getMultilineStringLiteral(){
-        char character = inputQueue.peek();
+    private Token getMultilineStringLiteral() {
+        updateLexeme(inputQueue.peek()); // "
 
-        while (character != '"' && !inputQueue.isEmpty()) {
-            character = inputQueue.peek();
-//            if (character == '"') break;
-            updateLexeme(character);
+        if (inputQueue.isEmpty()) {
+            return new Token(TokenType.LITERAL, StringEscapeUtils.unescapeJava(
+                    lexemeBuffer.replaceAll("\"", "")));
         }
 
-        if (character == '"') {
-            updateLexeme(character);
-            if (inputQueue.peek() == '"') {
-                updateLexeme(inputQueue.peek());
+        updateLexeme(inputQueue.peek()); // "
+
+        // here we have """ in lexeme buffer
+
+        int state = 1;
+        int nextState = state;
+        while (true) {
+            char character = inputQueue.peek();
+            switch (state) {
+                case 1:
+                    if (character == '"') {
+                        nextState = 2;
+                    } else {
+                        nextState = 1;
+                    }
+                    break;
+                case 2:
+                    if (character == '"') {
+                        nextState = 3;
+                    } else {
+                        nextState = 1;
+                    }
+                    break;
+                case 3:
+                    if (character == '"') {
+                        nextState = 4;
+                    } else {
+                        nextState = 1;
+                    }
+                    break;
+                case 4:
+                    return new Token(TokenType.LITERAL, StringEscapeUtils.unescapeJava(
+                            lexemeBuffer.replaceAll("\"\"\"", "")));
             }
+
+            updateLexeme(character);
+
+            if (inputQueue.peek() == null) {
+                return new Token(TokenType.LITERAL, StringEscapeUtils.unescapeJava(
+                        lexemeBuffer.replaceAll("\"\"\"", "")));
+            }
+            state = nextState;
         }
-        return new Token(TokenType.LITERAL, lexemeBuffer.replaceAll("\"", ""));
     }
 
     private Token getDirectiveToken() {
@@ -323,6 +363,11 @@ class Lexer {
             updateLexeme(character);
         }
 
+        // identifiers and keywords can not be followed by a number
+        if (getPreviousToken().type == TokenType.IDENTIFIER
+                || getPreviousToken().type == TokenType.KEYWORD) {
+            return new Token(TokenType.ERROR, lexemeBuffer);
+        }
         return new Token(TokenType.NUMBER, lexemeBuffer);
     }
 
@@ -332,12 +377,8 @@ class Lexer {
         lexemeBuffer = lexemeBuffer.concat(String.valueOf(character));
         inputQueue.poll();
     }
+
+    private Token getPreviousToken() {
+        return tokens.get(tokens.size() - 1);
+    }
 }
-
-//TODO: errors
-//TODO: multiline literals
-//TODO: escape characters
-
-// прибрала пробільні символи з токенів
-// прибрала "" з токенів-літералів
-// виправила оператори з крапками (оператор може містити крапку тільки якщо він з неї починається)

@@ -1,9 +1,26 @@
-internal typealias _Machine =
-    """
-    sjdfnejrbngv
-    erjgvneorg
-    ewrgleworg"pigver
-    ""kergoebr
-    "lsjng"
-    sdfgih
-    """
+import UIKit
+me = "sdfgsd"xlfghf"
+class 2 ViewController: UIViewController  {
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+}
+
+override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+
+    var resourceFileDictionary: NSDictionary?
+
+    //Load content of Info.plist into resourceFileDictionary dictionary
+    if let path = Bundle.main.path(forResource: "Info", ofType: "plist") {
+        resourceFileDictionary = NSDictionary(contentsOfFile: path)
+    }
+
+    if let resourceFileDictionaryContent = resourceFileDictionary {
+
+        //Or we can print out entire Info.plist dictionary to preview its content
+        print(resourceFileDictionaryContent)
+
+    }
+  }
+}
