@@ -1,5 +1,5 @@
 import UIKit
-me = "sdfgsd"xlfghf"
+me = "literal"
 class 2 ViewController: UIViewController  {
 
 override func viewDidLoad() {

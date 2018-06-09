@@ -289,17 +289,19 @@ class Lexer {
     }
 
     private Token getMultilineStringLiteral() {
-        updateLexeme(inputQueue.peek()); // "
+        updateLexeme(inputQueue.peek()); // second "
 
-        if (inputQueue.isEmpty()) {
+        // it could also be empty literal: ""
+        if (inputQueue.isEmpty() || inputQueue.peek() != '"') {
             return new Token(TokenType.LITERAL, StringEscapeUtils.unescapeJava(
                     lexemeBuffer.replaceAll("\"", "")));
         }
 
-        updateLexeme(inputQueue.peek()); // "
+        updateLexeme(inputQueue.peek()); // third "
 
         // here we have """ in lexeme buffer
 
+        // implemented with states to catch 3 sequential '"'
         int state = 1;
         int nextState = state;
         while (true) {
@@ -388,6 +390,4 @@ class Lexer {
 // виправила оператори з крапками (оператор може містити крапку тільки якщо він з неї починається)
 // додала багаторядкові літерали
 // практично додала обробку escape characters, але не працює з \"
-// помилки:
-    // після ідентифікатора або ключового слова не може йти число
-    // "ахах"ахах" ->
+// деякі помилки
